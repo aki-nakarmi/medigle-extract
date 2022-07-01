@@ -13,4 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/closed/import', '\App\Http\Controllers\ClosedFacilityController@import')->name('closed.import');
+Route::get('/closed/download', '\App\Http\Controllers\ClosedFacilityController@download')->name('closed.download');
 Route::get('/', '\App\Http\Controllers\ClosedFacilityController@index');
+

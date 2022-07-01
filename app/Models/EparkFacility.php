@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EparkFacility extends Model
 {
+    use \Awobaz\Compoships\Compoships;
     public $table='epark_facility';
 //    public $fillable
 
