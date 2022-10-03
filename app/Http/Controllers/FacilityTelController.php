@@ -3,62 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ClosedExport;
+use App\Exports\TelExport;
 use App\Imports\FacilityImport;
-use App\Models\ClosedFacility;
+use App\Imports\TelImport;
+use App\Models\CompareTel;
 use App\Utilities\FileUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\View\View;
-use Maatwebsite\Excel\Excel;
 
-class ClosedFacilityController extends Controller
+class FacilityTelController extends Controller
 {
-    /**
-     * @var FileUpload
-     */
-    private $fileUpload;
+    protected $fileUpload;
 
-    /**
-     * @param FileUpload $fileUpload
-     */
     public function __construct(FileUpload $fileUpload)
     {
-        $this->fileUpload = $fileUpload;
+        $this->fileUpload=$fileUpload;
     }
 
-    public function index()
-    {
-
-        return view('index');
-    }
-    public function import(Request $request)
-    {
-
-        if ($request->hasFile('closed_data')) {
-            $file = $request->file('closed_data');
-            $upload = $this->fileUpload->handle($file, storage_path('app'), "closed");
+    public function import(Request  $request){
+        if ($request->hasFile('compare_tel')) {
+            $file = $request->file('compare_tel');
+            $upload = $this->fileUpload->handle($file, storage_path('app'), "tel");
             $filePath = sprintf("%s/%s", storage_path('app'), Arr::get($upload, 'filename'));
 
-            (new FacilityImport)->import($filePath);
-
+            (new TelImport())->import($filePath);
             flash('アップロードが完了しました。');
-            return redirect()->back();
         }
         flash('ファイルが利用できません。');
-
         return redirect()->back();
     }
-
     public function download()
     {
 
-        return (new ClosedExport())->download('closed_epark_answer.xlsx');
+        return (new TelExport())->download('compare_tel_answer.xlsx');
 
     }
     public function destroy(){
         try {
-           ClosedFacility::truncate();
+            CompareTel::truncate();
             flash()->message("テーブルからすべてのデータを消しました。");
         }catch (\Exception $exception){
             logger()->error($exception->getMessage());
